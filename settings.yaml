@@ -1,0 +1,17 @@
+---
+  screen_area:
+    x: 0
+    y: 120
+    width: 950
+    height: 533
+    #Monitor number probably not working, keep 1
+    monitor_number: 1
+
+  chrome_location:
+    nombre_de_la_ventana: "Path Of Alchemist - Google Chrome"
+    x: -8
+    y: 0
+    width: 967
+    height: 670
+
+  show_debug_window: True
