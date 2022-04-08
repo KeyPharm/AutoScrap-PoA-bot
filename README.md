@@ -1,7 +1,7 @@
 # PoA Image Recognition AutoMove
 Just a tool for PoA, based on AI to detect moving objects, and move according to it.
 
-![Ingame Preview](https://i.imgur.com/qugIW8O.png)
+![Ingame Preview](https://i.imgur.com/eCXblIM.png)
 
 # How to install
 1) First you need to install python interpreter on your windows at:
