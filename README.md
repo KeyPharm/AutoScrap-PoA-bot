@@ -1,5 +1,5 @@
-# AutoScrap PoA bot
-Just a bot for Path of Alchemist, based on AI to detect moving objects, what items to pick and finish the game lazyly.
+# PoA Image Recognition AutoMove
+Just a tool for PoA, based on AI to detect moving objects, and move according to it.
 
 ![Ingame Preview](https://i.imgur.com/qugIW8O.png)
 
