@@ -1,3 +1,5 @@
+from statistics import median
+from tkinter import W
 import cv2
 import time
 import mss
@@ -17,7 +19,7 @@ fps = 0
 def printData():
     # return
     mtod = """
-        AutoScrap PoA Bot
+        PoA Image Recognition AutoMove
                                                                  v0.1
         [No toques nada, relájate y disfruta]
         [Cierra esta ventana para parar el bot]
@@ -66,7 +68,7 @@ gOffSetX = s["screen_area"]["x"]
 gWidth = s["screen_area"]["width"]
 gHeight = s["screen_area"]["height"]
 gMonitorNumber = s["screen_area"]["monitor_number"]
-def printScreen(offSetX=0, offSetY=0, maxX=0, maxY=0):
+def printScreen(x=0, y=0, w=0, h=0):
     with mss.mss() as sct:
         global gMonitorNumber
         monitor_number = gMonitorNumber
@@ -77,15 +79,21 @@ def printScreen(offSetX=0, offSetY=0, maxX=0, maxY=0):
         global gOffSetX
         global gWidth
         global gHeight
+
+        offSetX = 0
+        offSetY = 0
         width = gWidth
         height = gHeight
-        if maxX != 0 and offSetX!=0 and offSetX < maxX:
-            width = maxX - offSetX
-        if maxY != 0 and offSetY!=0 and offSetY < maxY:
-            height = maxY - offSetY
+
+        if not (x==0 and y == 0 and w == 0 and h ==0):
+            offSetX = x
+            offSetY = y
+            width = w
+            height = h
+
         monitor = {
-            "top": mon["top"] + gOffSetY + offSetY,  # 100px from the top
-            "left": mon["left"] + gOffSetX + offSetX,  # 100px from the left
+            "top": mon["top"] + gOffSetY + offSetY,
+            "left": mon["left"] + gOffSetX + offSetX,
             "width": width,
             "height": height,
             "mon": monitor_number,
@@ -101,7 +109,7 @@ def mostrarGUIPantalla():
     global mostradoGUI
     if mostrarGUI and not mostradoGUI:
         mostradoGUI= True
-        ventanaGUI = pyautogui.getWindowsWithTitle("AutoScrap PoA Bot")[0]
+        ventanaGUI = pyautogui.getWindowsWithTitle("PoA Image Recognition AutoMove")[0]
         ventanaGUI.moveTo(962-8,97)
 
 def writeText(img,x,y,text):
@@ -236,15 +244,6 @@ def isBloque(img,x,y,w,h):
     global bloqueX
     global bloqueT
 
-    # compareX=0
-    # compareY=0
-    # if fondo==1:#1 biblioteca, 2 castillo, 3 comedor
-    #     compareX,compareY = 0,0
-    # elif fondo==2:
-    #     compareX,compareY = 0,0
-    # elif fondo==3:
-    #     compareX,compareY = 0,0
-
     if (w>90 or h>90) and not (squareAinsideSquareB(x,y,x+w,y+h,150,297,960,492) and w>132 and w<151 and h>78 and h<85) and (y+h)<335:
         writeText(img,x,y-12,"Bomba")
         bloqueCerca=True
@@ -288,12 +287,12 @@ def processScreenShoot():
             if cond>150:
                 bloqueCerca=False
         move()
-        cv2.imshow("AutoScrap PoA Bot", img)
+        cv2.imshow("PoA Image Recognition AutoMove", img)
         mostrarGUIPantalla()
         cv2.waitKey(1)
 
-def findImgOnSource(img, source, rango = 0.9 ):
-    result = cv2.matchTemplate(source,img,cv2.TM_CCOEFF_NORMED)
+def findImgOnSource(needle, source, rango = 0.9 ):
+    result = cv2.matchTemplate(source,needle,cv2.TM_CCOEFF_NORMED)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
     if max_val >= rango:
         return True
@@ -326,9 +325,24 @@ def detectFondo():
         fondo=0
         return False
 
+imgFinishDay = cv2.imread("img/finishDay.png")
+
+def detectFinishGame():
+    totalSS = []
+    for x in range(0,4):
+        ss = printScreen()
+        time.sleep(1/3)
+        totalSS.append(ss)
+    medianFrame = np.median(totalSS, axis=0).astype(dtype=np.uint8)
+    return findImgOnSource(imgFinishDay,medianFrame,0.9999)
+    
+
 def clickVolverAJugar():
     print("disimulando unos segundos..")
-    time.sleep(random.randint(2,4))
+    if detectFinishGame():
+        print("Terminada la partida por hoy")
+        exit()
+    time.sleep(random.randint(0,2))
     pyautogui.moveTo(512+random.randint(0, 30),366+random.randint(0, 5),1/random.randint(80, 120))
     pyautogui.click()
     time.sleep(1/4)
